@@ -22,18 +22,18 @@ using namespace cv;
 
 typedef actionlib::SimpleActionServer<actionlib_tutorials::buoyAction> Server;
 
-class Buoy 
+class Buoy
 {
 private:
 	ros::NodeHandle _n;
 	Server _s;
-	
+
 	ros::Subscriber _sub;
-	
+
 	actionlib_tutorials::buoyFeedback _feedback;
 	actionlib_tutorials::buoyResult _result;
 	std::string _actionName;
-	
+
 	Point2f _center;
 	float _radius;
 

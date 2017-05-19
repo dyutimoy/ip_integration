@@ -10,7 +10,7 @@
 	angle and x and y
 
 
- */	
+ */
 using namespace std;
 
 Buoy::Buoy(string name) : _s(_n, name, boost::bind(&Buoy::executeCB, this, _1), false), _actionName(name)
@@ -31,7 +31,7 @@ void Buoy::detectcallBack(const std_msgs::Int64MultiArray::ConstPtr &num)
 	_center.x=num->data[0];
 	_center.y=num->data[1];
 }
-//setting aur parameters 
+//setting aur parameters
 
 void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
 {
@@ -40,7 +40,7 @@ void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
 	bool success =true;
 	cout<<"kuch ho rahha rrrrrr hai"<<endl;
 	switch(_goal->order)
-	{	
+	{
 		case DETECT_BUOY:
         {
             int _detected;
@@ -61,20 +61,21 @@ void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
 				{
 					_result.sequence.push_back(BUOY_DETECTED);
 					_s.setSucceeded(_result);
-					_feedback.sequence.push_back(0);
+					_feedback.sequence.clear();
+					_feedback.sequence.push_back(1);
 					_feedback.sequence.push_back(0);
 					_feedback.sequence.push_back(BUOY_DETECTED);
 					_feedback.sequence.push_back(0);
 					break;
-				}	
+				}
 				else
 				{
-					
+					_feedback.sequence.clear();
 					_feedback.sequence.push_back(0);
 					_feedback.sequence.push_back(0);
 					_feedback.sequence.push_back(DETECT_BUOY);
 					_feedback.sequence.push_back(180);
-					
+
 				}
 				_s.publishFeedback(_feedback);
 				looprate.sleep();
@@ -83,7 +84,7 @@ void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
             break;
         }
 		case ALIGN_BUOY:
-		{	
+		{
 			int _detected;
 			_detected =_radius;
 			while(ros::ok())
@@ -103,20 +104,22 @@ void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
 
                 	if((_feedback.sequence[2] < 5 && _feedback.sequence[2] > -5) && (_feedback.sequence[3] > -5 && _feedback.sequence[3] < 5) && _feedback.sequence[1] != 180)
                 	{
+										_feedback.sequence.clear();
                 		_feedback.sequence.push_back(BUOY_ALIGNED);
                 		_feedback.sequence.push_back(0);
                 		_result.sequence.push_back(BUOY_ALIGNED);
                 		_s.setSucceeded(_result);
 
                    		break;
-                	}	
+                	}
                 	else {
                 		_feedback.sequence.push_back(ALIGN_BUOY);
                 		_feedback.sequence.push_back(10);
                 	}
-                }	
+                }
                 else
                	{
+									_feedback.sequence.clear();
 					_feedback.sequence.push_back(0);
 					_feedback.sequence.push_back(0);
 					_feedback.sequence.push_back(DETECT_BUOY);
@@ -131,20 +134,20 @@ void Buoy::executeCB(const actionlib_tutorials::buoyGoalConstPtr &_goal)
                 looprate.sleep();
 
 			}
-			break;				
+			break;
 		}
 
-	}		
+	}
 
-}	
+}
 
 void Buoy::getAllignment()
 {
-	
+	_feedback.sequence.clear();
 	_feedback.sequence.push_back(480/2 - _center.x);
 	_feedback.sequence.push_back(640/2-_center.y);
 	 cout<< _feedback.sequence[0]<< " : " << _feedback.sequence[1] << endl;
-    
+
 }
 
 
